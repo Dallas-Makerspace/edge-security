@@ -7,7 +7,7 @@
 #### software
    - [etcher](https://www.balena.io/etcher/) or dd
    - latest copy of [Hypriot](https://github.com/hypriot/image-builder-rpi/releases)
-   - IDE
+   - IDE or $EDITOR of choice for changing passwords in files located in src/*
    
 #### hardware
    - [64Gb+ sdcard](https://www.amazon.com/dp/B073JYVKNX/)
