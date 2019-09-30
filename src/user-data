@@ -1,0 +1,50 @@
+#cloud-config
+# vim: syntax=yaml
+#
+
+hostname: edgesec
+manage_etc_hosts: true
+
+resize_rootfs: true
+growpart:
+    mode: auto
+    devices: ["/"]
+    ignore_growroot_disabled: false
+
+users:
+  - name: pi
+    gecos: "default user"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: users,docker,video
+    plain_text_passwd: raspberry
+    lock_passwd: false
+    ssh_pwauth: true
+    chpasswd: { expire: false }
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+packages:
+  - ntp
+  - snmpd
+
+locale: "en_US.UTF-8"
+timezone: "ETC/UTC"
+
+write_files:
+    - path: "/etc/docker/daemon.json"
+      owner: "root:root"
+      content: |
+        {
+          "labels": [ "os=linux", "arch=arm64", "role=infrastructure" ],
+          "experimental": true
+        }
+
+runcmd:
+  - [ systemctl, restart, avahi-daemon ]
+  - [ systemctl, restart, docker ]
+  - [ docker, swarm, init ]
+  - [ docker, network, create, '-d overlay', '--scope swarm', public ]
+  - [ docker, network, create, '-d overlay', '--scope swarm', internal ]
+  - [ docker, stack, deploy, '-c /boot/docker-compose.yml', edgesec ]
