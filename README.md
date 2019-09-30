@@ -1,5 +1,4 @@
-Edge Security
-
+# Edge Security
 
 ## Installation
 
